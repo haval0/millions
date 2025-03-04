@@ -1,0 +1,14 @@
+[package]
+name = "millions"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8"
+redb = "2"
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0.140"
+tokio = { version = "1", features = ["rt-multi-thread"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
