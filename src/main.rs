@@ -1,38 +1,28 @@
+use millions::{AppState, db, routes::create_app, services::start_polling};
 use std::sync::Arc;
-
-use redb::{Database, WriteTransaction};
-use reqwest::Client;
-use routes::{AppState, TOKENS_TABLE, create_app};
-
-mod routes;
+use tokio::net::TcpListener;
+use tracing::info;
 
 #[tokio::main]
-async fn main() {
-    let db = Arc::new(Database::create("tokens.redb").unwrap());
+async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        .init();
 
-    {
-        let write_txn = db.begin_write().unwrap();
-        initialize_tables(&write_txn);
-        write_txn.commit().unwrap();
-    }
+    info!("Starting application");
 
-    let client = Client::new();
+    let db = Arc::new(db::tokens::init_database("tokens.redb")?);
+    let client = reqwest::Client::new();
 
-    let state = AppState {
-        db: db.clone(),
-        client: client.clone(),
-    };
+    let state = AppState { db, client };
 
-    tokio::spawn(routes::poll_and_notify(state.clone()));
+    info!("Spawning Calypso polling task");
+    tokio::spawn(start_polling(state.clone()));
 
     let app = create_app(state);
+    info!("Starting server on 0.0.0.0:3000");
+    let listener = TcpListener::bind("0.0.0.0:3000").await?;
+    axum::serve(listener, app).await?;
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
-}
-
-fn initialize_tables(txn: &WriteTransaction) {
-    // Create tables if they don’t exist
-    txn.open_table(TOKENS_TABLE)
-        .unwrap_or_else(|_| txn.open_table(TOKENS_TABLE).unwrap());
+    Ok(())
 }
