@@ -1,15 +1,14 @@
-use crate::{AppState, models::expo_token::ExpoToken};
+use crate::{AppState, errors::HandlerError, extractors::Json, models::expo_token::ExpoToken};
 use anyhow::Context;
-use axum::{Json, extract::State, http::StatusCode};
+use axum::extract::State;
 use tracing::info;
 
 pub async fn store_token(
     State(state): State<AppState>,
     Json(token): Json<ExpoToken>,
-) -> Result<(), axum::http::StatusCode> {
+) -> Result<(), HandlerError> {
     crate::db::tokens::store_token(state.db.as_ref(), &token.token)
-        .context("Failed to store token")
-        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+        .context("Failed to store token")?;
     info!("Token stored via HTTP: {}", token.token);
     Ok(())
 }
