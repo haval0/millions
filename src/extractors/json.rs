@@ -4,7 +4,7 @@ use axum::{
 };
 
 #[derive(FromRequest)]
-#[from_request(via(axum::Json), rejection(crate::errors::AppError))]
+#[from_request(via(axum::Json), rejection(crate::errors::http::ClientError))]
 pub struct Json<T>(pub T);
 
 impl<T> IntoResponse for Json<T>
