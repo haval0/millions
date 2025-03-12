@@ -14,13 +14,13 @@ pub async fn start_polling(state: AppState) {
             Ok(current_items) => {
                 if let Some(ref prev) = last_items {
                     if let Some(new_item) = detect_new_item(prev, &current_items) {
-                        info!("Detected new item: {:?}", new_item);
+                        info!(item_id = %new_item.id, item_title = %new_item.title_english, "detected new item");
                         notify_all(&state, &new_item).await;
                     }
                 }
                 last_items = Some(current_items);
             }
-            Err(e) => error!("Failed to fetch Calypso events: {:?}", e),
+            Err(e) => error!(err = %e, "failed to fetch Calypso events"),
         }
     }
 }
@@ -58,15 +58,14 @@ pub async fn notify_all(state: &AppState, new_item: &CalypsoItem) {
                     .send()
                     .await;
                 match result {
-                    Ok(_) => info!(
-                        "Sent notification for item {} to token {}",
-                        new_item.id, token
-                    ),
-                    Err(e) => error!("Failed to send notification to {}: {:?}", token, e),
+                    Ok(_) => {
+                        info!(item_id = %new_item.id, token, "sent notification for item to token")
+                    }
+                    Err(e) => error!(token, err = %e, "failed to send notification to token"),
                 }
             }
         }
-        Err(e) => error!("Failed to get tokens: {:?}", e),
+        Err(e) => error!(err = %e, "failed to get tokens"),
     }
 }
 

@@ -17,6 +17,6 @@ pub async fn fetch_events(client: &Client) -> Result<Vec<CalypsoItem>> {
         .json::<CalypsoResponse>()
         .await?;
 
-    info!("Fetched {} Calypso items", response.content.len());
+    info!("fetched {} Calypso items", response.content.len());
     Ok(response.content)
 }

@@ -11,7 +11,7 @@ pub fn init_database(path: &str) -> Result<Database> {
         write_txn.open_table(TOKENS_TABLE)?;
     }
     write_txn.commit()?;
-    info!("Database initialized at {}", path);
+    info!("database initialized at {}", path);
     Ok(db)
 }
 
@@ -22,7 +22,7 @@ pub fn store_token(db: &Database, token: &str) -> Result<()> {
         table.insert(token, "")?;
     }
     write_txn.commit()?;
-    info!("Stored token: {}", token);
+    info!(%token, "stored token");
     Ok(())
 }
 
@@ -33,7 +33,7 @@ pub fn get_all_tokens(db: &Database) -> Result<Vec<String>> {
         .iter()?
         .map(|result| result.map(|(token, _)| token.value().to_string()))
         .collect::<Result<Vec<_>, _>>()?;
-    info!("Retrieved {} tokens", tokens.len());
+    info!("retrieved {} tokens", tokens.len());
     Ok(tokens)
 }
 

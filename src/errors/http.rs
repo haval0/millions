@@ -8,7 +8,7 @@ pub struct ClientError(anyhow::Error);
 
 impl IntoResponse for ClientError {
     fn into_response(self) -> Response {
-        tracing::error!("Client error: {:?}", self.0);
+        tracing::error!(err = %self.0, "client error");
         StatusCode::BAD_REQUEST.into_response()
     }
 }
@@ -27,7 +27,7 @@ pub struct ServerError(anyhow::Error);
 
 impl IntoResponse for ServerError {
     fn into_response(self) -> Response {
-        tracing::error!("Server error: {:?}", self.0);
+        tracing::error!(err = %self.0, "server error");
         StatusCode::INTERNAL_SERVER_ERROR.into_response()
     }
 }
