@@ -25,47 +25,51 @@ pub async fn start_polling(state: AppState) {
     }
 }
 
+// Detects the topmost item in `current` as new if its id does not exist in `prev`
 pub fn detect_new_item(prev: &[CalypsoItem], current: &[CalypsoItem]) -> Option<CalypsoItem> {
-    let current_top = &current[0];
-    if current_top.id != prev.first().map_or(0, |item| item.id)
-        && !prev.iter().any(|item| item.id == current_top.id)
-    {
-        Some(current_top.clone())
-    } else {
-        None
-    }
+    current.first().and_then(|current_top| {
+        if !prev.iter().any(|item| item.id == current_top.id) {
+            Some(current_top.clone())
+        } else {
+            None
+        }
+    })
 }
 
 pub async fn notify_all(state: &AppState, new_item: &CalypsoItem) {
-    match tokens::get_all_tokens(&state.db) {
-        Ok(tokens) => {
-            for token in tokens {
-                let result = state.client
-                    .post("https://exp.host/--/api/v2/push/send")
-                    .json(&json!({
-                        "to": token,
-                        "title": match new_item.item_type.as_str() {
-                            "EVENT" => "New Event",
-                            "POST" => "New Post",
-                            _ => "New Update",
-                        },
-                        "body": format!(
-                            "{}: {}",
-                            if new_item.title_english.is_empty() { &new_item.title_swedish } else { &new_item.title_english },
-                            new_item.content_english.chars().take(100).collect::<String>()
-                        )
-                    }))
-                    .send()
-                    .await;
-                match result {
-                    Ok(_) => {
-                        info!(item_id = %new_item.id, token, "sent notification for item to token")
-                    }
-                    Err(e) => error!(token, err = %e, "failed to send notification to token"),
-                }
-            }
+    let tokens = match tokens::get_all_tokens(&state.db) {
+        Ok(tokens) => tokens,
+        Err(e) => {
+            error!(err = %e, "failed to get tokens");
+            return;
         }
-        Err(e) => error!(err = %e, "failed to get tokens"),
+    };
+
+    for token in tokens {
+        let item_type = match new_item.item_type.as_str() {
+            "EVENT" => "New Event",
+            "POST" => "New Post",
+            _ => "New Update",
+        };
+        let item_title = if new_item.title_english.is_empty() {
+            &new_item.title_swedish
+        } else {
+            &new_item.title_english
+        };
+        let title = format!("{}: {}", item_type, item_title);
+        let body: String = new_item.content_english.chars().take(100).collect();
+
+        let result = state
+            .client
+            .post("https://exp.host/--/api/v2/push/send")
+            .json(&json!({ "to": token, "title": title, "body": body }))
+            .send()
+            .await;
+
+        match result {
+            Ok(_) => info!(item_id = %new_item.id, token, "sent notification for item to token"),
+            Err(e) => error!(token, err = %e, "failed to send notification to token"),
+        }
     }
 }
 
