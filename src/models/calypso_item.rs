@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CalypsoItem {
-    pub id: i32,
+    pub id: u32,
     pub item_type: String,
     pub updated: String,
     pub title_swedish: String,
