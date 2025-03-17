@@ -16,13 +16,21 @@ pub fn init_database(path: &str) -> Result<Database> {
 }
 
 pub fn store_token(db: &Database, token: &str) -> Result<()> {
+    let mut old: Option<String> = None;
     let write_txn = db.begin_write()?;
     {
         let mut table = write_txn.open_table(TOKENS_TABLE)?;
-        table.insert(token, "")?;
+        let result = table.insert(token, "")?;
+        if let Some(value) = result {
+            old = Some(value.value().to_string());
+        }
     }
     write_txn.commit()?;
-    info!(%token, "stored token");
+    if let Some(_) = old {
+        info!(%token, "refreshed token");
+    } else {
+        info!(%token, "stored new token");
+    }
     Ok(())
 }
 
