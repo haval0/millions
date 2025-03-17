@@ -1,4 +1,5 @@
 use crate::{AppState, db::tokens, models::calypso_item::CalypsoItem, services::calypso};
+use html2text::from_read;
 use serde_json::json;
 use tokio::time::{Duration, interval};
 use tracing::{error, info};
@@ -57,7 +58,14 @@ pub async fn notify_all(state: &AppState, new_item: &CalypsoItem) {
             &new_item.title_english
         };
         let title = format!("{}: {}", item_type, item_title);
-        let body: String = new_item.content_english.chars().take(100).collect();
+        let plain_body = match from_read(new_item.content_english.as_bytes(), usize::MAX) {
+            Ok(text) => text,
+            Err(e) => {
+                error!(err = %e, "failed to convert html to text");
+                return;
+            }
+        };
+        let body: String = plain_body.chars().take(100).collect();
 
         let result = state
             .client
