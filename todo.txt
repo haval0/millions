@@ -1,0 +1,9 @@
+remove json extractor
+use only one custom error (ServerError aka AppError with 500 code for handlers only atp)
+use custom events system
+add payments
+
+
+replace reqwest with something lighter, do not use "idna" for url especially. Maybe use hyper
+remove html2text
+maybe create metaframework/vite replacement with starter templates and minimal boilerplate for SSR and Web Components
