@@ -14,7 +14,7 @@ pub fn layout(title: &str, content: Markup) -> Markup {
             body {
                 nav.bottom-nav {
                     ul {
-                        li { a href="/news" { "📰 News" } }
+                        li { a href="/news" { "📰" br; "News" } }
                     }
                 }
                 main {
