@@ -40,12 +40,12 @@ pub fn news_feed(items: &Vec<CalypsoItem>) -> Markup {
                 p {
                     "By " (item.author_display)
                     @if let Some(p_as) = item.publish_as.as_ref() { " as " (p_as) }
-                    " · " (item.publish_date)
+                    " · " (item.publish_date.datetime())
                 }
                 @if item.item_type == "EVENT" {
                     p {
-                        "📅 " (item.event_start_time.as_ref().unwrap())
-                        " 🕒 " (item.event_start_time.as_ref().unwrap()) " - " (item.event_end_time.as_ref().unwrap())
+                        "📅 " (item.event_start_time.as_ref().unwrap().date())
+                        " 🕒 " (item.event_start_time.as_ref().unwrap().time()) " - " (item.event_end_time.as_ref().unwrap().time())
                         " 📍 " (item.event_location.as_ref().unwrap())
                     }
                 }
