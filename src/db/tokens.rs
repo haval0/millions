@@ -26,7 +26,7 @@ pub fn store_token(db: &Database, token: &str) -> Result<()> {
         }
     }
     write_txn.commit()?;
-    if let Some(_) = old {
+    if old.is_some() {
         info!(%token, "refreshed token");
     } else {
         info!(%token, "stored new token");
