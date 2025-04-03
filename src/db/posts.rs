@@ -1,9 +1,15 @@
 use anyhow::Result;
-use bb8_postgres::tokio_postgres::Client;
+use bb8_postgres::{
+    PostgresConnectionManager,
+    bb8::PooledConnection,
+    tokio_postgres::{Client, NoTls},
+};
 
 use crate::models::post::{Event, Post, Translation};
 
-pub async fn get_all_posts(db: Client, language: &str) -> Result<Vec<Post>> {
+type DatabaseConnection = PooledConnection<'static, PostgresConnectionManager<NoTls>>;
+
+pub async fn get_all_posts(db: DatabaseConnection, language: &str) -> Result<Vec<Post>> {
     let posts = db
         .query(
             "SELECT
@@ -57,7 +63,7 @@ pub async fn get_all_posts(db: Client, language: &str) -> Result<Vec<Post>> {
     Ok(posts)
 }
 
-pub async fn store_post(mut db: Client, post: Post) -> Result<()> {
+pub async fn store_post(mut db: DatabaseConnection, post: Post) -> Result<()> {
     let transaction = db.transaction().await?;
     let post_row = transaction
         .query_one(
