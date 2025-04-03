@@ -15,7 +15,7 @@ async fn main() -> anyhow::Result<()> {
     info!("Starting application");
 
     let db = Arc::new(db::tokens::init_database("tokens.redb")?);
-    let postgres = db::init_db("millions", "millions").await?;
+    let postgres = db::init_db("0.0.0.0", "millions", "millions").await?;
     let client = reqwest::Client::new();
 
     let state = AppState {
