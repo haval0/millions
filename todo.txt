@@ -9,3 +9,5 @@ remove html2text
 maybe create metaframework/vite replacement with starter templates and minimal boilerplate for SSR and Web Components
 manage migrations smartly
 bb8 prepare_cached: https://github.com/djc/bb8/issues/46 (wrap `Client`s beside a StatementCache HashMap)
+add posts paging
+make models (post.rs, event.rs) not so confusing in relation to db (posts.rs with both)

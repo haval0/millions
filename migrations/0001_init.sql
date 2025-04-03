@@ -20,14 +20,14 @@ CREATE TABLE IF NOT EXISTS translations
 post_id integer REFERENCES posts(id) ON DELETE CASCADE,
 language varchar NOT NULL,
 title varchar NOT NULL,
-description varchar,
+description varchar NOT NULL,
 PRIMARY KEY(post_id, language)
 );
 
 CREATE TABLE IF NOT EXISTS events
 (
 post_id integer PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
-location varchar,
-start_time timestamptz,
-end_time timestamptz
+location varchar NOT NULL,
+start_time timestamptz NOT NULL,
+end_time timestamptz NOT NULL
 );

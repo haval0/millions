@@ -1,4 +1,6 @@
+pub mod posts;
 pub mod tokens;
+
 use anyhow::Result;
 use bb8_postgres::PostgresConnectionManager;
 use bb8_postgres::bb8::Pool;

@@ -4,8 +4,11 @@ use time::OffsetDateTime;
 pub struct Post {
     pub id: i32,
     pub author: String,
-    pub publish: OffsetDateTime,
+    pub publish: Option<OffsetDateTime>,
     pub language: String,
     pub title: String,
     pub description: String,
+    pub location: Option<String>,
+    pub start_time: Option<OffsetDateTime>,
+    pub end_time: Option<OffsetDateTime>,
 }
