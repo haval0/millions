@@ -15,9 +15,14 @@ async fn main() -> anyhow::Result<()> {
     info!("Starting application");
 
     let db = Arc::new(db::tokens::init_database("tokens.redb")?);
+    let postgres = db::init_db("millions", "millions").await?;
     let client = reqwest::Client::new();
 
-    let state = AppState { db, client };
+    let state = AppState {
+        db,
+        postgres,
+        client,
+    };
 
     info!("Spawning Calypso polling task");
     tokio::spawn(start_polling(state.clone()));
