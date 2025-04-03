@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 anyhow = "1"
 axum = { version = "0.8", features = ["macros"] }
+bb8-postgres = { version = "0.9", features = ["with-time-0_3"] }
 html2text = "0.14"
 maud = { version = "0.27", features = ["axum"] }
 redb = "2"

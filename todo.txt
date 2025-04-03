@@ -7,3 +7,5 @@ add payments
 replace reqwest with something lighter, do not use "idna" for url especially. Maybe use hyper
 remove html2text
 maybe create metaframework/vite replacement with starter templates and minimal boilerplate for SSR and Web Components
+manage migrations smartly
+bb8 prepare_cached: https://github.com/djc/bb8/issues/46 (wrap `Client`s beside a StatementCache HashMap)
