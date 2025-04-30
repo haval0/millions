@@ -1,7 +1,13 @@
 remove json extractor
 use only one custom error (ServerError aka AppError with 500 code for handlers only atp)
-use custom events system
 add payments
+make models (post.rs, event.rs) not so confusing in relation to db (posts.rs with both)
+add support for flexible amount of translation languages for the posts/events creation forms
+add server config for which translation languages to require/allow
+add support for post editing
+import posts from calypso
+export posts to calypso
+add secure user system with language preference and post permissions
 
 
 replace reqwest with something lighter, do not use "idna" for url especially. Maybe use hyper
@@ -10,4 +16,3 @@ maybe create metaframework/vite replacement with starter templates and minimal b
 manage migrations smartly
 bb8 prepare_cached: https://github.com/djc/bb8/issues/46 (wrap `Client`s beside a StatementCache HashMap)
 add posts paging
-make models (post.rs, event.rs) not so confusing in relation to db (posts.rs with both)

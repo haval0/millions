@@ -1,9 +1,5 @@
 use anyhow::Result;
-use bb8_postgres::{
-    PostgresConnectionManager,
-    bb8::PooledConnection,
-    tokio_postgres::{Client, NoTls},
-};
+use bb8_postgres::{PostgresConnectionManager, bb8::PooledConnection, tokio_postgres::NoTls};
 
 use crate::models::post::{Event, Post, Translation};
 
@@ -68,7 +64,7 @@ pub async fn store_post(mut db: DatabaseConnection, post: Post) -> Result<()> {
     let post_row = transaction
         .query_one(
             "INSERT INTO posts (author, title, publish)
-        VALUES ($1, $2, $3)",
+            VALUES ($1, $2, $3)",
             &[&post.author, &post.title, &post.publish],
         )
         .await?;
@@ -94,7 +90,7 @@ pub async fn store_post(mut db: DatabaseConnection, post: Post) -> Result<()> {
         transaction
             .execute(
                 "INSERT INTO events (post_id, location, start_time, end_time)
-            VALUES ($1, $2, $3, $4)",
+                VALUES ($1, $2, $3, $4)",
                 &[
                     &post_id,
                     &event.location,
